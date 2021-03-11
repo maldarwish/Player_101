@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 public class MusicService extends Service {
 
     MusicPlayer musicPlayer;
+    private final IBinder iBinder= new MyBinder();
 
     public static final String COMPLETE_INTENT = "complete intent";
     public static final String MUSICNAME = "music name";
@@ -22,38 +23,43 @@ public class MusicService extends Service {
 
     public void startMusic(){
 
-
+        musicPlayer.playMusic();
     }
 
     public void pauseMusic(){
 
-
+        musicPlayer.pauseMusic();
     }
 
     public void resumeMusic(){
 
-
+        musicPlayer.resumeMusic();
     }
 
     public int getPlayingStatus(){
-        return 0;
+
+        return musicPlayer.getMusicStatus();
     }
 
 
     public void onUpdateMusicName(String musicname) {
-
+        Intent intent = new Intent(COMPLETE_INTENT);
+        intent.putExtra(MUSICNAME, musicname);
+        sendBroadcast(intent);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
 
-        return null;
+        return iBinder;
     }
 
 
     public class MyBinder extends Binder {
 
-
+        MusicService getService(){
+            return MusicService.this;
+        }
     }
 }

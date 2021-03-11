@@ -2,7 +2,7 @@ package com.example.lab6_demo;
 
 import android.media.MediaPlayer;
 
-public class MusicPlayer  {
+public class MusicPlayer implements MediaPlayer.OnCompletionListener {
 
     MediaPlayer player;
     int currentPosition = 0;
@@ -37,15 +37,34 @@ public class MusicPlayer  {
     }
 
     public void playMusic() {
-
+        player= MediaPlayer.create(this.musicService, MUSICPATH[musicIndex]);
+        player.start();
+        player.setOnCompletionListener(this);
+        musicService.onUpdateMusicName(getMusicName());
+        musicStatus = 1;
     }
 
     public void pauseMusic() {
-
+        if(player!= null && player.isPlaying()){
+            player.pause();
+            currentPosition= player.getCurrentPosition();
+            musicStatus= 2;
+        }
     }
 
     public void resumeMusic() {
-
+        if(player!= null){
+            player.seekTo(currentPosition);
+            player.start();
+            musicStatus=1;
+        }
     }
 
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        musicIndex = (musicIndex +1) % MUSICNAME.length;
+        player.release();
+        player= null;
+        playMusic();
+    }
 }
